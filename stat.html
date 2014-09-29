@@ -1,0 +1,11 @@
+<?!= include('menu'); ?>
+
+<div>
+	<h1>Štatistiky</h1>
+
+	<? var stats = getMyStats(); ?>
+
+	<span> right: <?!= stats.right; ?>
+	</span> <span> wrong: <?!= stats.wrong; ?>
+	</span>
+</div>

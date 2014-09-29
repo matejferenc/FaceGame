@@ -1,0 +1,27 @@
+<?!= include('menu'); ?>
+
+<div>
+	settings
+
+	<form>
+		meno: <input type="text" name="name" value="<?= context.user.name ?>" />
+		priezvisko: <input type="text" name="surname"
+			value="<?= context.user.surname ?>" /> <input type="submit"
+			value="Save" id="submit"
+			onclick="this.value='Saving..';
+                    google.script.run.withSuccessHandler(settingsSaved)
+                    .saveSettings(this.parentNode)
+                    return false;" />
+	</form>
+
+	<div id="output"></div>
+
+</div>
+
+<!-- The function will be called after the Google Script has executed -->
+<script>
+    function settingsSaved(status) {
+        document.getElementById('output').innerHTML = status;
+        document.getElementById('submit').value='Save';
+    }
+</script>

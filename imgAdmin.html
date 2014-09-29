@@ -1,0 +1,69 @@
+<?!= include('menu'); ?>
+
+<div>
+
+	<a
+		href="https://www.facebook.com/dialog/oauth?client_id=723173857770344&scope=user_photos&redirect_uri=<?!= getScriptUrl(); ?>?p=imgAdmin">facebook</a>
+
+	<br />
+
+
+
+	<form id="imgUpload">
+
+		<input type="file" name="img">
+
+		<!-- The submit button. It calls the server side function uploadfiles() on click -->
+		<input type="submit" value="Upload File" id="submit"
+			onclick="this.value='Uploading..';
+                    google.script.run.withSuccessHandler(fileUploaded)
+                    .uploadFiles(this.parentNode)
+                    return false;">
+	</form>
+	<div id="output"></div>
+</div>
+
+<div id="uploadedImages">
+	<? var images = getImages(); ?>
+
+	<?
+  for (var i = 0; i < images.length; i++) { ?>
+	<img height="300"
+		src="https://docs.google.com/uc?export=view&id=<?= images[i] ?>" /> <a
+		href="#" onclick="google.script.run.removeImage(<?= images[i] ?>);">smazat</a>
+	<? } ?>
+
+</div>
+
+<div id="fbImages"></div>
+
+<!-- The function will be called after the Google Script has executed -->
+<script>
+    function fileUploaded(status) {
+        //document.getElementById('myForm').style.display = 'none';
+        document.getElementById('output').innerHTML = status;
+        document.getElementById('submit').value='Upload File';
+    }
+    
+    function addFbImages(fbImages) {
+      var html = '';
+      for (var i=0; i<fbImages.length; i++) {
+        html += '<img height="300" src="' +  fbImages[i].source + '"/>';
+        html += '<a href="#" onclick="google.script.run.downloadFromFb(' + fbImages[i].id + ')";>nahrat</a>';
+      }
+      html += '<a href="#" onclick="loadNextPage();">next</a>';
+      $('#fbImages').append(html);
+    }
+    
+    function loadNextPage() {
+      google.script.run.withSuccessHandler(addFbImages)
+                    .getNextPage();
+    }
+    
+    $(function() {
+      google.script.run.withSuccessHandler(addFbImages)
+                    .getFbImages();
+    });
+</script>
+
+

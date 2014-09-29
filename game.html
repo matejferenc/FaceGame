@@ -1,0 +1,57 @@
+<?!= include('menu'); ?>
+
+<div>
+	<form id="gameForm">
+
+		<div id="gameRound"></div>
+
+		<input type="submit" id="submit" value="Submit"
+			onclick="this.value='Submitting..';
+                    google.script.run.withSuccessHandler(guessTaken)
+                    .takeGuess(this.parentNode)
+                    return false;" />
+	</form>
+
+</div>
+
+<div id="output"></div>
+
+
+
+<script>
+    function guessTaken(status) {
+        $('#output').html(status);
+        $('#submit').val('Submit');
+        if (status == "OK") {
+          createGameRound();
+        }
+    }
+    
+    function createGameRound() {
+      google.script.run.withSuccessHandler(showGameRound)
+                    .startGameRound();
+    }
+    
+    function showGameRound(context) {
+      console.log("showGameRound");
+      var html = '';
+      
+      html += '<img height="300" src="https://docs.google.com/uc?export=view&id=' + context.game.imageId + '"/>';
+      var others = context.game.possibilities;
+      for (var i=0; i<others.length; i++) {
+      var other = others[i];
+           html += '<input type="radio" name="guess" id="' + other.folderId + '" value="' +  other.folderId + '">';
+           html += '<label for="' + other.folderId + '">';
+           html += other.name + " " + other.surname;
+           html += '</label>';
+           html += '<br/>';
+           //console.log("possibility: " + other.folderId);
+       }
+      //console.log(html);
+      $('#gameRound').html(html);
+    }
+    
+    $(function() {
+      createGameRound();
+    });
+</script>
